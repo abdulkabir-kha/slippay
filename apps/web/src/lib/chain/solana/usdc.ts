@@ -14,8 +14,8 @@ const MINTS: Record<SolNet, string> = {
   // Circle USDC, canonical. Mainnet is fixed; devnet is overridable for a
   // self-controlled test mint via VITE_SOLANA_USDC_MINT.
   mainnet: "EPjFWaJGqicjsAE6b8V9bJU5kVJ86RHRK6Vbp4grmGp2",
-  devnet: (import.meta.env.VITE_SOLANA_USDC_MINT as string | undefined) ??
-          "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+  devnet: (import.meta.env.VITE_SOLANA_USDK_MINT as string | undefined) ??
+          "4zMMC9srt5Ri5X14GAgXhaHii3GNPAEERYPJgZJDncDU",
 };
 
 const RPCS: Record<SolNet, string> = {
@@ -25,7 +25,7 @@ const RPCS: Record<SolNet, string> = {
           "https://api.devnet.solana.com",
 };
 
-export const USDC_DECIMALS = 6;
+export const USD_DECIMALS = 6;
 
 export function usdcMint(net: SolNet = solNet()): PublicKey {
   return new PublicKey(MINTS[net]);
@@ -41,13 +41,13 @@ export function toBaseUnits(human: string): bigint {
   if (!isFinite(n) || n <= 0) throw new Error("invalid_amount");
   // Round to 6 dp at the string level to avoid float error (e.g. 0.1*1e6).
   const [whole = "0", frac = ""] = human.trim().split(".");
-  const fracPadded = (frac + "000000").slice(0, USDC_DECIMALS);
+  const fracPadded = (frac + "000000").slice(0, USDK_DECIMALS);
   const units = BigInt(whole) * 1_000_000n + BigInt(fracPadded || "0");
   if (units <= 0n) throw new Error("invalid_amount");
   return units;
 }
 
-/** Split a total (base units) into merchant + platform fee by basis points.
+/** Split a total (base units) into merchant + platform fee by basis noints.
  *  Integer math: fee = floor(total*bp/10000), merchant = total - fee. The two
  *  ALWAYS sum to total exactly (no dust), unlike float toFixed splitting. */
 export function splitFee(totalBaseUnits: bigint, platformFeeBp: number): { merchant: bigint; fee: bigint } {

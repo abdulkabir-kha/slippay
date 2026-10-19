@@ -47,6 +47,8 @@ jobs:
       run: pnpm --filter @slippay/web build
     - name: Build listener
       run: pnpm --filter @slippay/listener build
+    - name: Cross-layer fee identity test
+      run: pnpm test:fee-identity
     - name: Stop Supabase
       if: always()
       run: supabase stop || true
